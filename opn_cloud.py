@@ -5,7 +5,7 @@ import itertools
 import os
 import multiprocessing
 
-# --- Проверка формы N = p^k * m^2 ---
+# --- РџСЂРѕРІРµСЂРєР° С„РѕСЂРјС‹ N = p^k * m^2 ---
 def check_perfect_odd_form(n, factorization):
     odd_exponent_indices = [i for i, (p, k) in enumerate(factorization.items()) if k % 2 == 1]
     if len(odd_exponent_indices) != 1:
@@ -36,7 +36,7 @@ def check_perfect_odd_form(n, factorization):
 
     return True
 
-# Получение делителей из факторизации
+# РџРѕР»СѓС‡РµРЅРёРµ РґРµР»РёС‚РµР»РµР№ РёР· С„Р°РєС‚РѕСЂРёР·Р°С†РёРё
 def get_divisors_from_factorization(factorization):
     primes = list(factorization.keys())
     exponents = list(factorization.values())
@@ -51,7 +51,7 @@ def get_divisors_from_factorization(factorization):
         divisors.append(divisor)
     return sorted(divisors)[:-1]
 
-# Обработка одного числа
+# РћР±СЂР°Р±РѕС‚РєР° РѕРґРЅРѕРіРѕ С‡РёСЃР»Р°
 def process_number(n):
     factorization_dict = sympy.factorint(n)
     factorization = list(factorization_dict.items())
@@ -118,14 +118,14 @@ def process_number(n):
     else:
         return None
 
-# Обработка блока чисел и сохранение
+# РћР±СЂР°Р±РѕС‚РєР° Р±Р»РѕРєР° С‡РёСЃРµР» Рё СЃРѕС…СЂР°РЅРµРЅРёРµ
 def process_block(start, end, block_id, save_dir="results"):
     filename = f"{save_dir}/block_{block_id}.csv"
     if os.path.exists(filename):
-        print(f"Блок {block_id} уже обработан. Пропускаем.")
+        print(f"Р‘Р»РѕРє {block_id} СѓР¶Рµ РѕР±СЂР°Р±РѕС‚Р°РЅ. РџСЂРѕРїСѓСЃРєР°РµРј.")
         return
 
-    print(f"Обработка блока {block_id}: {start} - {end}")
+    print(f"РћР±СЂР°Р±РѕС‚РєР° Р±Р»РѕРєР° {block_id}: {start} - {end}")
     
     with multiprocessing.Pool() as pool:
         results = pool.map(process_number, range(start, end, 2))
@@ -135,9 +135,9 @@ def process_block(start, end, block_id, save_dir="results"):
     df = pd.DataFrame(filtered_results)
     os.makedirs(save_dir, exist_ok=True)
     df.to_csv(filename, index=False)
-    print(f"Сохранён блок {block_id} -> {filename}")
+    print(f"РЎРѕС…СЂР°РЅС‘РЅ Р±Р»РѕРє {block_id} -> {filename}")
 
-# Объединение всех блоков
+# РћР±СЉРµРґРёРЅРµРЅРёРµ РІСЃРµС… Р±Р»РѕРєРѕРІ
 def combine_blocks(save_dir="results", final_filename="final_results.csv"):
     all_blocks = []
     for file in sorted(os.listdir(save_dir)):
@@ -148,9 +148,9 @@ def combine_blocks(save_dir="results", final_filename="final_results.csv"):
     df_full = pd.concat(all_blocks, ignore_index=True)
     df_full.sort_values(by='abs_relative_sum_divisors', inplace=True)
     df_full.to_csv(final_filename, index=False)
-    print(f"Финальный файл сохранён: {final_filename}")
+    print(f"Р¤РёРЅР°Р»СЊРЅС‹Р№ С„Р°Р№Р» СЃРѕС…СЂР°РЅС‘РЅ: {final_filename}")
 
-# Управляющая функция
+# РЈРїСЂР°РІР»СЏСЋС‰Р°СЏ С„СѓРЅРєС†РёСЏ
 def main(start=3, end=1000001, block_size=1000000):
     blocks = [(i, min(i + block_size, end)) for i in range(start, end, block_size)]
 
