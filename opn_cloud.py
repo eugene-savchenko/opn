@@ -4,6 +4,7 @@ import sympy
 import itertools
 import os
 import multiprocessing
+import argparse
 
 # --- Проверка формы N = p^k * m^2 ---
 def check_perfect_odd_form(n, factorization):
@@ -151,8 +152,16 @@ def combine_blocks(save_dir="results", final_filename="final_results.csv"):
     print(f"Финальный файл сохранён: {final_filename}")
 
 # Управляющая функция
-def main(start=3, end=1000001, block_size=1000000):
-    blocks = [(i, min(i + block_size, end)) for i in range(start, end, block_size)]
+def main():
+    parser = argparse.ArgumentParser(description="Process number ranges.")
+    parser.add_argument('--start', type=int, default=3, help='Start of range')
+    parser.add_argument('--end', type=int, default=1000001, help='End of range')
+    parser.add_argument('--block_size', type=int, default=1000000, help='Block size')
+    args = parser.parse_args()
+
+    print(f"Starting calculation from {args.start} to {args.end} with block size {args.block_size}...")
+
+    blocks = [(i, min(i + args.block_size, args.end)) for i in range(args.start, args.end, args.block_size)]
 
     for idx, (block_start, block_end) in enumerate(blocks):
         process_block(block_start, block_end, idx)
@@ -160,4 +169,4 @@ def main(start=3, end=1000001, block_size=1000000):
     combine_blocks()
 
 if __name__ == "__main__":
-    main(start=3, end=1000000000001, block_size=1000000)
+    main()
