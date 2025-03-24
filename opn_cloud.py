@@ -164,7 +164,7 @@ def main():
     blocks = [(i, min(i + args.block_size, args.end)) for i in range(args.start, args.end, args.block_size)]
 
     for _, (block_start, block_end) in enumerate(blocks):
-        block_id = block_start // block_size
+        block_id = block_start // args.block_size
         process_block(block_start, block_end, block_id)
 
     combine_blocks()
