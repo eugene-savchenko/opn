@@ -165,6 +165,8 @@ def main():
 
     for _, (block_start, block_end) in enumerate(blocks):
         block_id = block_start // args.block_size
+        if not block_start % 2:
+            block_start += 1
         process_block(block_start, block_end, block_id)
 
     combine_blocks()
