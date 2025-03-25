@@ -141,15 +141,31 @@ def process_block(start, end, block_id, save_dir="results"):
 # Объединение всех блоков
 def combine_blocks(save_dir="results", final_filename="final_results.csv"):
     all_blocks = []
+
     for file in sorted(os.listdir(save_dir)):
         if file.endswith(".csv"):
-            df_block = pd.read_csv(os.path.join(save_dir, file))
-            all_blocks.append(df_block)
+            path = os.path.join(save_dir, file)
+            if os.path.getsize(path) == 0:
+                print(f"Пропускаем пустой файл: {file}")
+                continue
+            try:
+                df_block = pd.read_csv(path)
+                if not df_block.empty:
+                    all_blocks.append(df_block)
+                else:
+                    print(f"Файл пустой (без строк): {file}")
+            except pd.errors.EmptyDataError:
+                print(f"Ошибка чтения (EmptyDataError): {file}")
+            except Exception as e:
+                print(f"Ошибка при чтении {file}: {e}")
 
-    df_full = pd.concat(all_blocks, ignore_index=True)
-    df_full.sort_values(by='abs_relative_sum_divisors', inplace=True)
-    df_full.to_csv(final_filename, index=False)
-    print(f"Финальный файл сохранён: {final_filename}")
+    if all_blocks:
+        df_full = pd.concat(all_blocks, ignore_index=True)
+        df_full.sort_values(by='abs_relative_sum_divisors', inplace=True)
+        df_full.to_csv(final_filename, index=False)
+        print(f"✅ Финальный файл сохранён: {final_filename}")
+    else:
+        print("⚠️ Нет непустых блоков для объединения.")
 
 # Управляющая функция
 def main():
